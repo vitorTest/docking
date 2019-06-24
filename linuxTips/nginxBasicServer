@@ -4,9 +4,70 @@ Install
 More install?
 > apt-get install nginx
 
+!!! A Problem here - apt-get is not working
+possible solution at:
+https://stackoverflow.com/questions/24832972/docker-apt-get-update-fails
+
+!!! So I try
+> nmcli dev show | grep 'IP4.DNS'
+and it gives me my IP 
+
+!!! Now I have to try again
+> docker run --dns THEIPNUMBER -i -t -p 8080:80 ubuntu:14.10 /bin/bash
+
+That doesn't work.
+
+!!! Trying to install a new version
+> sudo docker run -i -t --dns 192.168.15.1 ubuntu:16.04 /bin/bash
+
+!!!SUCCESS 
+
+!Now you have to remember that you are using ubuntu 16.04
+!Now I could install nginx
+
+Now I'm trying
+> docker run -i -t -p 8080:80 ubuntu:14.10 /bin/bash
+
+!It's not working anymore
+!I could Edit or create a file /etc/docker/daemon.json
+!Adding the following line to this file
+------------------------------------------------------------------------------
+{
+"dns": ["10.0.0.2", "8.8.8.8"]
+}
+------------------------------------------------------------------------------
+!But these are local tests, and I'll be switching IP's every time.
+!So when there is a need for external connection remeber to use --dns
+
+!Now to continue the course flux, I have to delete the oldest image.
+!So get the ID and
+> docker rmi [OPTIONS: --force, --no-prune] IMAGE [IMAGE...]
+> sudo docker rmi -f a8a2ba3ce1a3
+
+!And now we can be back to main stream.
+> docker run --dns 192.168.15.1 -i -t -p 8080:80 ubuntu:16.04 /bin/bash
+
 Starting nginx
 > /etc/init.d/nginx start
 
-IT's NOt WorkING. Ubuntu is not installing by apt-get.
-Or I try to continue with some latest version, or try to fix that.
+To verify if the container still running
+> Ctrl + p + q
+Go to the browser and access localhost:8080
+!SUCCESS
 
+!!!IMPORTANT
+If you logout from container, everything that you did will be lost.
+So we have to do a commit
+> docker commit CONTAINERID somename:version
+> docker commit a1f98445f9ab goodtux/nginx-ubuntu:1.0
+
+It creates a new image.
+
+Now we will create another image with another ports
+> docker run -i -t -p 6660:80 --dns 192.168.15.1 goodtux/nginx-ubuntu:1.0 
+/bin/bash
+
+And now we have two ports running
+
+To stop a docker image
+> docker stop CONTAINERID
