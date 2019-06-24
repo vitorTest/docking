@@ -1,0 +1,12 @@
+Install
+> docker run -i -t -p 8080:80 ubuntu:14.10 /bin/bash
+
+More install?
+> apt-get install nginx
+
+Starting nginx
+> /etc/init.d/nginx start
+
+IT's NOt WorkING. Ubuntu is not installing by apt-get.
+Or I try to continue with some latest version, or try to fix that.
+
